@@ -1,6 +1,3 @@
-# Energy Planner
-> DATA1050 Example Project Fall 19
+### Summary
 
-
-https://docs.google.com/document/d/1uwpXgpEZpacViosYREnze5MGQFuVhMaRtYixxmIKXBU/edit#
-
+The New York Times provides publicly accessible APIs with the goal of encouraging innovation through crowdsourcing. The Times would like the general community of developers to help gain insight into how the dissemination of information can be reimagined. Additionally, giving the public access to their data is inline with their core journalistic values; to inform the public. The Times APIs will provide data illuminating the titles and abstracts of the most popular articles over time.  This data can be leveraged to analyze and ultimately visualize the most popular topics in a given time period. Natural language processing will allow us to determine a topic area for an article and which keywords are most frequently used. By examining word choice in popular articles over time and visualizing this information via a Web App we will be able to identify trends over time and democratize this information to the public.
