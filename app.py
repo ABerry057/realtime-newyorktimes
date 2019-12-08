@@ -22,15 +22,8 @@ def page_header():
     Returns the page header as a dash `html.Div`
     """
     return html.Div(id='header', children=[
-        html.Div([html.H3('Visualization with datashader and Plotly')],
-                 className="ten columns"),
-        html.A([html.Img(id='logo', src=app.get_asset_url('github.png'),
-                         style={'height': '35px', 'paddingTop': '7%'}),
-                html.Span('Blownhither', style={'fontSize': '2rem', 'height': '35px', 'bottom': 0,
-                                                'paddingLeft': '4px', 'color': '#a3a7b0',
-                                                'textDecoration': 'none'})],
-               className="two columns row",
-               href='https://github.com/blownhither/'),
+        html.Div([html.H3('Real Time New York Times')],
+                 className="ten columns")
     ], className="row")
 
 
@@ -39,25 +32,15 @@ def description():
     Returns overall project description in markdown
     """
     return html.Div(children=[dcc.Markdown('''
-        # Energy Planner
-        As of today, 138 cities in the U.S. have formally announced 100% renewable energy goals or
-        targets, while others are actively considering similar goals. Despite ambition and progress,
-        conversion towards renewable energy remains challenging.
+        ### The News. Visualized.
+        The New York Times provides publicly-accessible APIs with the goal of encouraging innovation through crowdsourcing.
+        The Times would like the general community of developers to help gain insight into how the dissemination of information can be re-imagined. 
+        Additionally, giving the public access to their data is inline with their core journalistic values; to inform the public.
 
-        Wind and solar power are becoming more cost effective, but they will always be unreliable
-        and intermittent sources of energy. They follow weather patterns with potential for lots of
-        variability. Solar power starts to die away right at sunset, when one of the two daily peaks
-        arrives (see orange curve for load).
-
-        **Energy Planner is a "What-If" tool to assist making power conversion plans.**
-        It can be used to explore load satisfiability under different power contribution with 
-        near-real-time energy production & consumption data.
-
-        ### Data Source
-        Energy Planner utilizes near-real-time energy production & consumption data from [BPA 
-        Balancing Authority](https://www.bpa.gov/news/AboutUs/Pages/default.aspx).
-        The [data source](https://transmission.bpa.gov/business/operations/Wind/baltwg.aspx) 
-        **updates every 5 minutes**. 
+        The Times APIs provide data illuminating the titles and abstracts of the most popular articles over time. 
+        This data can be leveraged to analyze and ultimately visualize the most popular topics in a given time period. 
+        Natural language processing allows us to determine a topic area for an article and which keywords are most frequently used. 
+        By examining word choice in popular articles and visualizing this information via this Web App, we are be able to identify trends and democratize this information to the public. 
         ''', className='eleven columns', style={'paddingLeft': '5%'})], className="row")
 
 
@@ -171,7 +154,7 @@ def dynamic_layout():
         dcc.Graph(id='stacked-trend-graph', figure=static_stacked_trend_graph(stack=True)),
         what_if_description(),
         what_if_tool(),
-        architecture_summary(),
+        # architecture_summary(),
     ], className='row', id='content')
 
 
