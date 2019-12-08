@@ -1,6 +1,9 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from datetime import datetime as dt
+import dash
+from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
@@ -74,46 +77,42 @@ def static_stacked_trend_graph(stack=False):
     return fig
 
 
-def what_if_description():
+def interaction_description():
     """
-    Returns description of "What-If" - the interactive component
+    Returns description of interactive component
     """
     return html.Div(children=[
         dcc.Markdown('''
-        # " What If "
-        So far, BPA has been relying on hydro power to balance the demand and supply of power. 
-        Could our city survive an outage of hydro power and use up-scaled wind power as an
-        alternative? Find below **what would happen with 2.5x wind power and no hydro power at 
-        all**.   
-        Feel free to try out more combinations with the sliders. For the clarity of demo code,
-        only two sliders are included here. A fully-functioning What-If tool should support
-        playing with other interesting aspects of the problem (e.g. instability of load).
+        # Lorem ipsum
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         ''', className='eleven columns', style={'paddingLeft': '5%'})
     ], className="row")
 
 
-def what_if_tool():
+def interaction_tool():
     """
-    Returns the What-If tool as a dash `html.Div`. The view is a 8:3 division between
-    demand-supply plot and rescale sliders.
+    Returns the iteraction tool as a dash `html.Div`. The view is a 8:3 division between
+    visualization and controls.
     """
     return html.Div(children=[
-        html.Div(children=[dcc.Graph(id='what-if-figure')], className='nine columns'),
+        html.Div(children=[dcc.Graph(id='interaction-figure')], className='nine columns'),
 
         html.Div(children=[
-            html.H5("Rescale Power Supply", style={'marginTop': '2rem'}),
-            html.Div(children=[
-                dcc.Slider(id='wind-scale-slider', min=0, max=4, step=0.1, value=2.5, className='row',
-                           marks={x: str(x) for x in np.arange(0, 4.1, 1)})
-            ], style={'marginTop': '5rem'}),
-
-            html.Div(id='wind-scale-text', style={'marginTop': '1rem'}),
-
-            html.Div(children=[
-                dcc.Slider(id='hydro-scale-slider', min=0, max=4, step=0.1, value=0,
-                           className='row', marks={x: str(x) for x in np.arange(0, 4.1, 1)})
-            ], style={'marginTop': '3rem'}),
-            html.Div(id='hydro-scale-text', style={'marginTop': '1rem'}),
+            html.Div([
+                html.H5("Choose a date to explore contemporary news"),
+                dcc.DatePickerSingle(
+                    id='my-date-picker-single',
+                    min_date_allowed=dt(1900, 1, 1),
+                    max_date_allowed=dt(2018, 12, 31),
+                    initial_visible_month=dt(2010, 8, 15),
+                    date=str(dt(2010, 8, 15, 23, 59, 59))
+                ),
+                html.Div(id='output-container-date-picker-single')
+            ])
         ], className='three columns', style={'marginLeft': 5, 'marginTop': '10%'}),
     ], className='row eleven columns')
 
@@ -152,8 +151,8 @@ def dynamic_layout():
         description(),
         # dcc.Graph(id='trend-graph', figure=static_stacked_trend_graph(stack=False)),
         dcc.Graph(id='stacked-trend-graph', figure=static_stacked_trend_graph(stack=True)),
-        what_if_description(),
-        what_if_tool(),
+        interaction_description(),
+        interaction_tool(),
         # architecture_summary(),
     ], className='row', id='content')
 
@@ -165,42 +164,52 @@ app.layout = dynamic_layout
 # Defines the dependencies of interactive components
 
 @app.callback(
-    dash.dependencies.Output('wind-scale-text', 'children'),
-    [dash.dependencies.Input('wind-scale-slider', 'value')])
-def update_wind_sacle_text(value):
-    """Changes the display text of the wind slider"""
-    return "Wind Power Scale {:.2f}x".format(value)
+    Output('output-container-date-picker-single', 'children'),
+    [Input('my-date-picker-single', 'date')])
+def update_output(date):
+    string_prefix = 'You have selected: '
+    if date is not None:
+        date = dt.strptime(date.split(' ')[0], '%Y-%m-%d')
+        date_string = date.strftime('%B %d, %Y')
+        return string_prefix + date_string
+
+# @app.callback(
+#     dash.dependencies.Output('wind-scale-text', 'children'),
+#     [dash.dependencies.Input('wind-scale-slider', 'value')])
+# def update_wind_sacle_text(value):
+#     """Changes the display text of the wind slider"""
+#     return "Wind Power Scale {:.2f}x".format(value)
 
 
-@app.callback(
-    dash.dependencies.Output('hydro-scale-text', 'children'),
-    [dash.dependencies.Input('hydro-scale-slider', 'value')])
-def update_hydro_sacle_text(value):
-    """Changes the display text of the hydro slider"""
-    return "Hydro Power Scale {:.2f}x".format(value)
+# @app.callback(
+#     dash.dependencies.Output('hydro-scale-text', 'children'),
+#     [dash.dependencies.Input('hydro-scale-slider', 'value')])
+# def update_hydro_sacle_text(value):
+#     """Changes the display text of the hydro slider"""
+#     return "Hydro Power Scale {:.2f}x".format(value)
 
 
 
-@app.callback(
-    dash.dependencies.Output('what-if-figure', 'figure'),
-    [dash.dependencies.Input('wind-scale-slider', 'value'),
-     dash.dependencies.Input('hydro-scale-slider', 'value')])
-def what_if_handler(wind, hydro):
-    """Changes the display graph of supply-demand"""
-    df = fetch_all_bpa_as_df(allow_cached=True)
-    x = df['Datetime']
-    supply = df['Wind'] * wind + df['Hydro'] * hydro + df['Fossil/Biomass'] + df['Nuclear']
-    load = df['Load']
+# @app.callback(
+#     dash.dependencies.Output('what-if-figure', 'figure'),
+#     [dash.dependencies.Input('wind-scale-slider', 'value'),
+#      dash.dependencies.Input('hydro-scale-slider', 'value')])
+# def what_if_handler(wind, hydro):
+#     """Changes the display graph of supply-demand"""
+#     df = fetch_all_bpa_as_df(allow_cached=True)
+#     x = df['Datetime']
+#     supply = df['Wind'] * wind + df['Hydro'] * hydro + df['Fossil/Biomass'] + df['Nuclear']
+#     load = df['Load']
 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x, y=supply, mode='none', name='supply', line={'width': 2, 'color': 'pink'},
-                  fill='tozeroy'))
-    fig.add_trace(go.Scatter(x=x, y=load, mode='none', name='demand', line={'width': 2, 'color': 'orange'},
-                  fill='tonexty'))
-    fig.update_layout(template='plotly_dark', title='Supply/Demand after Power Scaling',
-                      plot_bgcolor='#23272c', paper_bgcolor='#23272c', yaxis_title='MW',
-                      xaxis_title='Date/Time')
-    return fig
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=x, y=supply, mode='none', name='supply', line={'width': 2, 'color': 'pink'},
+#                   fill='tozeroy'))
+#     fig.add_trace(go.Scatter(x=x, y=load, mode='none', name='demand', line={'width': 2, 'color': 'orange'},
+#                   fill='tonexty'))
+#     fig.update_layout(template='plotly_dark', title='Supply/Demand after Power Scaling',
+#                       plot_bgcolor='#23272c', paper_bgcolor='#23272c', yaxis_title='MW',
+#                       xaxis_title='Date/Time')
+#     return fig
 
 
 if __name__ == '__main__':
