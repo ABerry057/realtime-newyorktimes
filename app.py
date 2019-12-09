@@ -88,7 +88,7 @@ def interaction_description():
         Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         ''', className='eleven columns', style={'paddingLeft': '5%'})
     ], className="row")
 
@@ -164,36 +164,48 @@ app.layout = dynamic_layout
 # Defines the dependencies of interactive components
 
 @app.callback(
-    Output('output-container-date-picker-single', 'children'),
+    Output('interaction-figure', 'figure'),
     [Input('my-date-picker-single', 'date')])
-def update_output(date):
-    string_prefix = 'You have selected: '
+def update_figure(date):
     if date is not None:
-        date = dt.strptime(date.split(' ')[0], '%Y-%m-%d')
-        date_string = date.strftime('%B %d, %Y')
-        return string_prefix + date_string
+        return dict(
+        data=[
+            dict(
+                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+                y=[219, 146, 112, 800, 124, 180, 236, 207, 236, 263,
+                   350, 430, 474, 526, 488, 537, 500, 439],
+                name='Rest of world',
+                marker=dict(
+                    color='rgb(55, 83, 109)'
+                )
+            ),
+            dict(
+                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+                y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
+                   299, 340, 403, 549, 499],
+                name='China',
+                marker=dict(
+                    color='rgb(26, 118, 255)'
+                )
+            )
+        ],
+        layout=dict(
+            title='US Export of Plastic Scrap',
+            showlegend=True,
+            legend=dict(
+                x=0,
+                y=1.0
+            ),
+            margin=dict(l=40, r=0, t=40, b=30)
+        )
+    )
+
 
 # @app.callback(
-#     dash.dependencies.Output('wind-scale-text', 'children'),
-#     [dash.dependencies.Input('wind-scale-slider', 'value')])
-# def update_wind_sacle_text(value):
-#     """Changes the display text of the wind slider"""
-#     return "Wind Power Scale {:.2f}x".format(value)
-
-
-# @app.callback(
-#     dash.dependencies.Output('hydro-scale-text', 'children'),
-#     [dash.dependencies.Input('hydro-scale-slider', 'value')])
-# def update_hydro_sacle_text(value):
-#     """Changes the display text of the hydro slider"""
-#     return "Hydro Power Scale {:.2f}x".format(value)
-
-
-
-# @app.callback(
-#     dash.dependencies.Output('what-if-figure', 'figure'),
-#     [dash.dependencies.Input('wind-scale-slider', 'value'),
-#      dash.dependencies.Input('hydro-scale-slider', 'value')])
+#     dash.dependencies.Output('interaction-figure', 'figure'),
+#     )
 # def what_if_handler(wind, hydro):
 #     """Changes the display graph of supply-demand"""
 #     df = fetch_all_bpa_as_df(allow_cached=True)
