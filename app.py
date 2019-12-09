@@ -102,6 +102,7 @@ def interaction_tool():
         html.Div(children=[dcc.Graph(id='interaction-figure')], className='nine columns'),
 
         html.Div(children=[
+            # datePicker tool
             html.Div([
                 html.H5("Choose a date to explore contemporary news"),
                 dcc.DatePickerSingle(
@@ -112,6 +113,32 @@ def interaction_tool():
                     date=str(dt(2010, 8, 15, 23, 59, 59))
                 ),
                 html.Div(id='output-container-date-picker-single')
+            ]),
+            # dropdown for sections
+            html.Div([
+                html.H5("Choose a section of the paper to filter by"),
+                    dcc.Dropdown(
+                        id='section-dropdown',
+                        options=[
+                            {'label': 'World', 'value': 'world'},
+                            {'label': 'U.S.', 'value': 'us'},
+                            {'label': 'N.Y. / Region', 'value': 'nyregion'},
+                            {'label': 'Business', 'value': 'business'},
+                            {'label': 'Technology', 'value': 'technology'},
+                            {'label': 'Science', 'value': 'science'},
+                            {'label': 'Health', 'value': 'health'},
+                            {'label': 'Sports', 'value': 'sports'},
+                            {'label': 'Opinion', 'value': 'opinion'},
+                            {'label': 'Arts', 'value': 'arts'},
+                            {'label': 'Style', 'value': 'style'},
+                            {'label': 'Travel', 'value': 'travel'},
+                            {'label': 'Jobs', 'value': 'jobs'},
+                            {'label': 'Real Estate', 'value': 'realestate'},
+                            {'label': 'Autos', 'value': 'autos'}
+                        ],
+                        value='NYC'
+                    ),
+                    html.Div(id='dd-output-container')
             ])
         ], className='three columns', style={'marginLeft': 5, 'marginTop': '10%'}),
     ], className='row eleven columns')
@@ -202,6 +229,12 @@ def update_figure(date):
         )
     )
 
+
+@app.callback(
+    dash.dependencies.Output('dd-output-container', 'children'),
+    [dash.dependencies.Input('section-dropdown', 'value')])
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
 
 # @app.callback(
 #     dash.dependencies.Output('interaction-figure', 'figure'),
