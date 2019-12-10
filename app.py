@@ -47,39 +47,9 @@ def description():
         ''', className='eleven columns', style={'paddingLeft': '5%'})], className="row")
 
 
-def static_stacked_trend_graph(stack=False):
-    """
-    Returns scatter line plot of all power sources and power load.
-    If `stack` is `True`, the 4 power sources are stacked together to show the overall power
-    production.
-    """
-    df = fetch_all_bpa_as_df()
-    if df is None:
-        return go.Figure()
-    sources = ['Wind', 'Hydro', 'Fossil/Biomass', 'Nuclear']
-    x = df['Datetime']
-    fig = go.Figure()
-    for i, s in enumerate(sources):
-        fig.add_trace(go.Scatter(x=x, y=df[s], mode='lines', name=s,
-                                 line={'width': 2, 'color': COLORS[i]},
-                                 stackgroup='stack' if stack else None))
-    fig.add_trace(go.Scatter(x=x, y=df['Load'], mode='lines', name='Load',
-                             line={'width': 2, 'color': 'orange'}))
-    title = 'Energy Production & Consumption under BPA Balancing Authority'
-    if stack:
-        title += ' [Stacked]'
-    fig.update_layout(template='plotly_dark',
-                      title=title,
-                      plot_bgcolor='#23272c',
-                      paper_bgcolor='#23272c',
-                      yaxis_title='MW',
-                      xaxis_title='Date/Time')
-    return fig
-
-
 def interaction_description():
     """
-    Returns description of interactive component
+    Returns description of interactive component.
     """
     return html.Div(children=[
         dcc.Markdown('''
@@ -164,26 +134,87 @@ def suggestions():
         ''', className='row eleven columns', style={'paddingLeft': '5%'}),
     ], className='row')
 
+def about_text():
+    """
+    Returns markdown version of our about page text.
+    """
+    return html.Div(children=[
+        dcc.Markdown('''
+            # About
+            PLEASE ENTER ABOUT PAGE TEXT HERE
+        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        html.Div([
+            dcc.Link("Go to Visualization", href="/page-1"),
+            html.Br(),
+            dcc.Link("Go to Additional Details", href="/page-3")
+        ])
+    ], className='row', id="about-content")
+
+def additional_text():
+    """
+    Returns markdown version of our additional infor page text.
+    """
+    return html.Div(children=[
+        dcc.Markdown('''
+            # About
+            PLEASE ENTER ABOUT ADDITIONAL INFO HERE
+        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        html.Div([
+            dcc.Link("Go to Visualization", href="/page-1"),
+            html.Br(),
+            dcc.Link("Go to About", href="/page-2")
+        ])
+    ], className='row', id="additional-content")
 
 # Sequentially add page components to the app's layout
-def dynamic_layout():
+def viz_layout():
     return html.Div([
         page_header(),
         html.Hr(),
         description(),
-        # dcc.Graph(id='trend-graph', figure=static_stacked_trend_graph(stack=False)),
-        dcc.Graph(id='stacked-trend-graph', figure=static_stacked_trend_graph(stack=True)),
         interaction_description(),
         interaction_tool(),
         suggestions(),
-    ], className='row', id='content')
+        html.Div([
+            dcc.Link("Go to About", href="/page-2"),
+            html.Br(),
+            dcc.Link("Go to Additional Details", href="/page-3")
+        ])
+    ], className='row', id="viz-content")
 
 
-# set layout to a function which updates upon reloading
-app.layout = dynamic_layout
+app.config.suppress_callback_exceptions = True
+app.layout = viz_layout
 
+index_page = html.Div([
+    dcc.Link("Visualization", href="/page-1"),
+    html.Br(),
+    dcc.Link("About", href="/page-2"),
+    html.Br(),
+    dcc.Link("Additional Details", href="/page-3")
+])
+
+page_1_layout = viz_layout()
+page_2_layout = html.Div([
+    about_text()
+])
+page_3_layout = html.Div([
+    additional_text()
+])
 
 # Defines the dependencies of interactive components
+
+@app.callback(dash.dependencies.Output('page-content', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/page-1':
+        return page_1_layout
+    elif pathname == '/page-2':
+        return page_2_layout
+    elif pathname == '/page-3':
+        return page_3_layout
+    else:
+        return index_page
 
 @app.callback(
     Output('interaction-figure', 'figure'),
@@ -230,26 +261,6 @@ def update_figure(date):
     [dash.dependencies.Input('section-dropdown', 'value')])
 def update_output(value):
     return 'You have selected "{}"'.format(value)
-
-# @app.callback(
-#     dash.dependencies.Output('interaction-figure', 'figure'),
-#     )
-# def what_if_handler(wind, hydro):
-#     """Changes the display graph of supply-demand"""
-#     df = fetch_all_bpa_as_df(allow_cached=True)
-#     x = df['Datetime']
-#     supply = df['Wind'] * wind + df['Hydro'] * hydro + df['Fossil/Biomass'] + df['Nuclear']
-#     load = df['Load']
-
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=x, y=supply, mode='none', name='supply', line={'width': 2, 'color': 'pink'},
-#                   fill='tozeroy'))
-#     fig.add_trace(go.Scatter(x=x, y=load, mode='none', name='demand', line={'width': 2, 'color': 'orange'},
-#                   fill='tonexty'))
-#     fig.update_layout(template='plotly_dark', title='Supply/Demand after Power Scaling',
-#                       plot_bgcolor='#23272c', paper_bgcolor='#23272c', yaxis_title='MW',
-#                       xaxis_title='Date/Time')
-#     return fig
 
 
 if __name__ == '__main__':
