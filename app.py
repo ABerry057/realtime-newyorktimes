@@ -120,6 +120,7 @@ def interaction_tool():
                     dcc.Dropdown(
                         id='section-dropdown',
                         options=[
+                            {'label': "All Sections", 'value': 'all'},
                             {'label': 'World', 'value': 'world'},
                             {'label': 'U.S.', 'value': 'us'},
                             {'label': 'N.Y. / Region', 'value': 'nyregion'},
@@ -136,7 +137,7 @@ def interaction_tool():
                             {'label': 'Real Estate', 'value': 'realestate'},
                             {'label': 'Autos', 'value': 'autos'}
                         ],
-                        value='NYC'
+                        value='all'
                     ),
                     html.Div(id='dd-output-container')
             ])
@@ -144,29 +145,23 @@ def interaction_tool():
     ], className='row eleven columns')
 
 
-def architecture_summary():
+def suggestions():
     """
-    Returns the text and image of architecture summary of the project.
+    Returns the text for suggested searches and filters pertaining to interesting topics/trends.
     """
     return html.Div(children=[
         dcc.Markdown('''
-            # Project Architecture
-            This project uses MongoDB as the database. All data acquired are stored in raw form to the
-            database (with de-duplication). An abstract layer is built in `database.py` so all queries
-            can be done via function call. For a more complicated app, the layer will also be
-            responsible for schema consistency. A `plot.ly` & `dash` app is serving this web page
-            through. Actions on responsive components on the page is redirected to `app.py` which will
-            then update certain components on the page.  
+            # Suggestions
+            Start your exploration by searching by the following date and section combinations:
+
+            1. 04/15/1912 - Filter by 'World'
+            2. 12/08/1941 - Filter by 'World'
+            3. 07/21/1969 - Filter by 'Science'
+            4. 08/10/1974 - Filter by 'Politics'
+
+            What trends to you observe? Can you see reoccuring topics appear in different sections? What other historical events or patterns can you find?
+
         ''', className='row eleven columns', style={'paddingLeft': '5%'}),
-
-        html.Div(children=[
-            html.Img(src="https://docs.google.com/drawings/d/e/2PACX-1vQNerIIsLZU2zMdRhIl3ZZkDMIt7jhE_fjZ6ZxhnJ9bKe1emPcjI92lT5L7aZRYVhJgPZ7EURN0AqRh/pub?w=670&amp;h=457",
-                     className='row'),
-        ], className='row', style={'textAlign': 'center'}),
-
-        dcc.Markdown('''
-        
-        ''')
     ], className='row')
 
 
@@ -180,7 +175,7 @@ def dynamic_layout():
         dcc.Graph(id='stacked-trend-graph', figure=static_stacked_trend_graph(stack=True)),
         interaction_description(),
         interaction_tool(),
-        # architecture_summary(),
+        suggestions(),
     ], className='row', id='content')
 
 
