@@ -134,94 +134,39 @@ def suggestions():
         ''', className='row eleven columns', style={'paddingLeft': '5%'}),
     ], className='row')
 
-def about_text():
+def navigation_bar():
     """
-    Returns markdown version of our about page text.
     """
-    return html.Div(children=[
-        dcc.Markdown('''
-            # About
-            PLEASE ENTER ABOUT PAGE TEXT HERE
-        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
-        html.Div([
-            dcc.Link("Go to Visualization", href="/page-1"),
-            html.Br(),
-            dcc.Link("Go to Additional Details", href="/page-3")
+    return html.Div([
+            dcc.RadioItems(options=[
+                {'label': i, 'value': i} for i in ['Chapter 1', 'Chapter 2']
+            ], value='Chapter 1',
+            id='navigation-links'),
+            html.Div(id='body')
         ])
-    ], className='row', id="about-content")
-
-def additional_text():
-    """
-    Returns markdown version of our additional infor page text.
-    """
-    return html.Div(children=[
-        dcc.Markdown('''
-            # About
-            PLEASE ENTER ABOUT ADDITIONAL INFO HERE
-        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
-        html.Div([
-            dcc.Link("Go to Visualization", href="/page-1"),
-            html.Br(),
-            dcc.Link("Go to About", href="/page-2")
-        ])
-    ], className='row', id="additional-content")
 
 # Sequentially add page components to the app's layout
 def viz_layout():
     return html.Div([
+        navigation_bar(),
         page_header(),
         html.Hr(),
         description(),
         interaction_description(),
         interaction_tool(),
-        suggestions(),
-        html.Div([
-            dcc.Link("Go to About", href="/page-2"),
-            html.Br(),
-            dcc.Link("Go to Additional Details", href="/page-3")
-        ])
+        suggestions()
     ], className='row', id="viz-content")
 
-
-index_page = html.Div([
-    dcc.Location(id="url", refresh=False),
-    dcc.Link("Visualization", href="/page-1"),
-    html.Br(),
-    dcc.Link("About", href="/page-2"),
-    html.Br(),
-    dcc.Link("Additional Details", href="/page-3")
-], id="index-page")
-
-# app.config.suppress_callback_exceptions = True
-# app.layout = index_page
-app.layout = html.Div([
-    dcc.RadioItems(options=[
-        {'label': i, 'value': i} for i in ['Chapter 1', 'Chapter 2']
-    ], value='Chapter 1',
-    id='navigation-links'),
-    html.Div(id='body')
-])
-page_1_layout = viz_layout()
-page_2_layout = html.Div([
-    about_text()
-])
-page_3_layout = html.Div([
-    additional_text()
-])
+app.config.suppress_callback_exceptions = True
+app.layout = viz_layout()
 
 # Defines the dependencies of interactive components
-
-# @app.callback(dash.dependencies.Output('index-page', 'children'),
-#               [dash.dependencies.Input('url', 'pathname')])
-# def display_page(pathname):
-#     if pathname == '/page-1':
-#         return page_1_layout
-#     elif pathname == '/page-2':
-#         return page_2_layout
-#     elif pathname == '/page-3':
-#         return page_3_layout
-#     else:
-#         return index_page
+@app.callback(Output('body', 'children'), [Input('navigation-links', 'value')])
+def display_children(chapter):
+    if chapter == 'Chapter 1':
+        return html.Div('Welcome to Chapter 1')
+    elif chapter == 'Chapter 2':
+        return html.Div('Welcome to Chapter 2')
 
 @app.callback(
     Output('interaction-figure', 'figure'),
