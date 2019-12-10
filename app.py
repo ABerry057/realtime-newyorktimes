@@ -10,8 +10,8 @@ import plotly.graph_objects as go
 from database import fetch_all_bpa_as_df
 
 # Definitions of constants. This projects uses extra CSS stylesheet at `./assets/style.css`
-COLORS = ['rgb(67,67,67)', 'rgb(115,115,115)', 'rgb(49,130,189)', 'rgb(189,189,189)']
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', '/assets/style.css']
+COLORS = ['rgb(25,100,126)', 'rgb(40,175,176)', 'rgb(221,222,205)', 'rgb(238,229,229)']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', '/assets/custom_style.css']
 
 # Define the dash app first
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
