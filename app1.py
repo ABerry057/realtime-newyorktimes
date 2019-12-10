@@ -139,8 +139,8 @@ def navigation_bar():
     """
     return html.Div([
             dcc.RadioItems(options=[
-                {'label': i, 'value': i} for i in ['Chapter 1', 'Chapter 2']
-            ], value='Chapter 1',
+                {'label': i, 'value': i} for i in ['Visualization', 'About', 'Additional Info']
+            ], value='Visualization',
             id='navigation-links'),
             html.Div(id='body')
         ])
@@ -162,12 +162,14 @@ app.layout = viz_layout()
 
 # Defines the dependencies of interactive components
 @app.callback(Output('body', 'children'), [Input('navigation-links', 'value')])
-def display_children(chapter):
-    if chapter == 'Chapter 1':
-        return html.Div('Welcome to Chapter 1')
-    elif chapter == 'Chapter 2':
-        return html.Div('Welcome to Chapter 2')
-
+def display_children(page):
+    if page == 'Visualization':
+        return page
+    elif page == 'About':
+        return page
+    else:
+        return page
+   
 @app.callback(
     Output('interaction-figure', 'figure'),
     [Input('my-date-picker-single', 'date')])

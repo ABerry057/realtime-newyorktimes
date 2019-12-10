@@ -192,15 +192,8 @@ index_page = html.Div([
     dcc.Link("Additional Details", href="/page-3")
 ], id="index-page")
 
-# app.config.suppress_callback_exceptions = True
-# app.layout = index_page
-app.layout = html.Div([
-    dcc.RadioItems(options=[
-        {'label': i, 'value': i} for i in ['Chapter 1', 'Chapter 2']
-    ], value='Chapter 1',
-    id='navigation-links'),
-    html.Div(id='body')
-])
+app.config.suppress_callback_exceptions = True
+app.layout = index_page
 page_1_layout = viz_layout()
 page_2_layout = html.Div([
     about_text()
@@ -211,17 +204,17 @@ page_3_layout = html.Div([
 
 # Defines the dependencies of interactive components
 
-# @app.callback(dash.dependencies.Output('index-page', 'children'),
-#               [dash.dependencies.Input('url', 'pathname')])
-# def display_page(pathname):
-#     if pathname == '/page-1':
-#         return page_1_layout
-#     elif pathname == '/page-2':
-#         return page_2_layout
-#     elif pathname == '/page-3':
-#         return page_3_layout
-#     else:
-#         return index_page
+@app.callback(dash.dependencies.Output('index-page', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/page-1':
+        return page_1_layout
+    elif pathname == '/page-2':
+        return page_2_layout
+    elif pathname == '/page-3':
+        return page_3_layout
+    else:
+        return index_page
 
 @app.callback(
     Output('interaction-figure', 'figure'),
