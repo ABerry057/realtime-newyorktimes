@@ -2,7 +2,6 @@ import requests
 from pymongo import MongoClient
 import pprint
 
-
 def dowload_data_from_one_month(year, month):
     """
     This function makes a call the NYT archive API and pulls data from a given year and month and it returns a list of jsons containing the data.
@@ -69,11 +68,25 @@ def get_document_keywords_list(data):
 
     return output
 
+import collections
+def get_word_to_count_dict(corpus):
+    """
+    Return a list in the following format: [{keyword: count}]
+    """
+    c = collections.Counter()
+    for doc in corpus:
+        keywords = doc[1]
+        for keyword in keywords:
+            c[keyword] += 1
+    return [{key: c[key]} for key in c.keys()]
+
 if __name__ == "__main__":
     client = MongoClient("mongodb+srv://team:dummyPassword@cluster0-6vgfj.mongodb.net/test?retryWrites=true&w=majority")
     db = client.new_york_times
 
-    db.articles.drop()
+    #db.articles.drop()
 
-    print(get_document_keywords_list(get_articles_from_one_month(db, 2010, 2))[1:10])
+    data = get_document_keywords_list(get_articles_from_one_month(db, 2010, 2))[1:100]
+
+    print(get_word_to_count_dict(data))
 
