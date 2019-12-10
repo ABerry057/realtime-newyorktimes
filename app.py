@@ -1,14 +1,17 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from datetime import datetime as dt
+import dash
+from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
 
 from database import fetch_all_bpa_as_df
 
 # Definitions of constants. This projects uses extra CSS stylesheet at `./assets/style.css`
-COLORS = ['rgb(67,67,67)', 'rgb(115,115,115)', 'rgb(49,130,189)', 'rgb(189,189,189)']
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', '/assets/style.css']
+COLORS = ['rgb(25,100,126)', 'rgb(40,175,176)', 'rgb(221,222,205)', 'rgb(238,229,229)']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', '/assets/custom_style.css']
 
 # Define the dash app first
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -44,163 +47,220 @@ def description():
         ''', className='eleven columns', style={'paddingLeft': '5%'})], className="row")
 
 
-def static_stacked_trend_graph(stack=False):
+def interaction_description():
     """
-    Returns scatter line plot of all power sources and power load.
-    If `stack` is `True`, the 4 power sources are stacked together to show the overall power
-    production.
-    """
-    df = fetch_all_bpa_as_df()
-    if df is None:
-        return go.Figure()
-    sources = ['Wind', 'Hydro', 'Fossil/Biomass', 'Nuclear']
-    x = df['Datetime']
-    fig = go.Figure()
-    for i, s in enumerate(sources):
-        fig.add_trace(go.Scatter(x=x, y=df[s], mode='lines', name=s,
-                                 line={'width': 2, 'color': COLORS[i]},
-                                 stackgroup='stack' if stack else None))
-    fig.add_trace(go.Scatter(x=x, y=df['Load'], mode='lines', name='Load',
-                             line={'width': 2, 'color': 'orange'}))
-    title = 'Energy Production & Consumption under BPA Balancing Authority'
-    if stack:
-        title += ' [Stacked]'
-    fig.update_layout(template='plotly_dark',
-                      title=title,
-                      plot_bgcolor='#23272c',
-                      paper_bgcolor='#23272c',
-                      yaxis_title='MW',
-                      xaxis_title='Date/Time')
-    return fig
-
-
-def what_if_description():
-    """
-    Returns description of "What-If" - the interactive component
+    Returns description of interactive component.
     """
     return html.Div(children=[
         dcc.Markdown('''
-        # " What If "
-        So far, BPA has been relying on hydro power to balance the demand and supply of power. 
-        Could our city survive an outage of hydro power and use up-scaled wind power as an
-        alternative? Find below **what would happen with 2.5x wind power and no hydro power at 
-        all**.   
-        Feel free to try out more combinations with the sliders. For the clarity of demo code,
-        only two sliders are included here. A fully-functioning What-If tool should support
-        playing with other interesting aspects of the problem (e.g. instability of load).
+        # Lorem ipsum
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         ''', className='eleven columns', style={'paddingLeft': '5%'})
     ], className="row")
 
 
-def what_if_tool():
+def interaction_tool():
     """
-    Returns the What-If tool as a dash `html.Div`. The view is a 8:3 division between
-    demand-supply plot and rescale sliders.
+    Returns the iteraction tool as a dash `html.Div`. The view is a 8:3 division between
+    visualization and controls.
     """
     return html.Div(children=[
-        html.Div(children=[dcc.Graph(id='what-if-figure')], className='nine columns'),
+        html.Div(children=[dcc.Graph(id='interaction-figure')], className='nine columns'),
 
         html.Div(children=[
-            html.H5("Rescale Power Supply", style={'marginTop': '2rem'}),
-            html.Div(children=[
-                dcc.Slider(id='wind-scale-slider', min=0, max=4, step=0.1, value=2.5, className='row',
-                           marks={x: str(x) for x in np.arange(0, 4.1, 1)})
-            ], style={'marginTop': '5rem'}),
-
-            html.Div(id='wind-scale-text', style={'marginTop': '1rem'}),
-
-            html.Div(children=[
-                dcc.Slider(id='hydro-scale-slider', min=0, max=4, step=0.1, value=0,
-                           className='row', marks={x: str(x) for x in np.arange(0, 4.1, 1)})
-            ], style={'marginTop': '3rem'}),
-            html.Div(id='hydro-scale-text', style={'marginTop': '1rem'}),
+            # datePicker tool
+            html.Div([
+                html.H5("Choose a date to explore contemporary news"),
+                dcc.DatePickerSingle(
+                    id='my-date-picker-single',
+                    min_date_allowed=dt(1900, 1, 1),
+                    max_date_allowed=dt(2018, 12, 31),
+                    initial_visible_month=dt(2010, 8, 15),
+                    date=str(dt(2010, 8, 15, 23, 59, 59))
+                ),
+                html.Div(id='output-container-date-picker-single')
+            ]),
+            # dropdown for sections
+            html.Div([
+                html.H5("Choose a section of the paper to filter by"),
+                    dcc.Dropdown(
+                        id='section-dropdown',
+                        options=[
+                            {'label': "All Sections", 'value': 'all'},
+                            {'label': 'World', 'value': 'world'},
+                            {'label': 'U.S.', 'value': 'us'},
+                            {'label': 'N.Y. / Region', 'value': 'nyregion'},
+                            {'label': 'Business', 'value': 'business'},
+                            {'label': 'Technology', 'value': 'technology'},
+                            {'label': 'Science', 'value': 'science'},
+                            {'label': 'Health', 'value': 'health'},
+                            {'label': 'Sports', 'value': 'sports'},
+                            {'label': 'Opinion', 'value': 'opinion'},
+                            {'label': 'Arts', 'value': 'arts'},
+                            {'label': 'Style', 'value': 'style'},
+                            {'label': 'Travel', 'value': 'travel'},
+                            {'label': 'Jobs', 'value': 'jobs'},
+                            {'label': 'Real Estate', 'value': 'realestate'},
+                            {'label': 'Autos', 'value': 'autos'}
+                        ],
+                        value='all'
+                    ),
+                    html.Div(id='dd-output-container')
+            ])
         ], className='three columns', style={'marginLeft': 5, 'marginTop': '10%'}),
     ], className='row eleven columns')
 
 
-def architecture_summary():
+def suggestions():
     """
-    Returns the text and image of architecture summary of the project.
+    Returns the text for suggested searches and filters pertaining to interesting topics/trends.
     """
     return html.Div(children=[
         dcc.Markdown('''
-            # Project Architecture
-            This project uses MongoDB as the database. All data acquired are stored in raw form to the
-            database (with de-duplication). An abstract layer is built in `database.py` so all queries
-            can be done via function call. For a more complicated app, the layer will also be
-            responsible for schema consistency. A `plot.ly` & `dash` app is serving this web page
-            through. Actions on responsive components on the page is redirected to `app.py` which will
-            then update certain components on the page.  
+            # Suggestions
+            Start your exploration by searching by the following date and section combinations:
+
+            1. 04/15/1912 - Filter by 'World'
+            2. 12/08/1941 - Filter by 'World'
+            3. 07/21/1969 - Filter by 'Science'
+            4. 08/10/1974 - Filter by 'Politics'
+
+            What trends to you observe? Can you see reoccuring topics appear in different sections? What other historical events or patterns can you find?
+
         ''', className='row eleven columns', style={'paddingLeft': '5%'}),
-
-        html.Div(children=[
-            html.Img(src="https://docs.google.com/drawings/d/e/2PACX-1vQNerIIsLZU2zMdRhIl3ZZkDMIt7jhE_fjZ6ZxhnJ9bKe1emPcjI92lT5L7aZRYVhJgPZ7EURN0AqRh/pub?w=670&amp;h=457",
-                     className='row'),
-        ], className='row', style={'textAlign': 'center'}),
-
-        dcc.Markdown('''
-        
-        ''')
     ], className='row')
 
+def about_text():
+    """
+    Returns markdown version of our about page text.
+    """
+    return html.Div(children=[
+        dcc.Markdown('''
+            # About
+            PLEASE ENTER ABOUT PAGE TEXT HERE
+        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        html.Div([
+            dcc.Link("Go to Visualization", href="/page-1"),
+            html.Br(),
+            dcc.Link("Go to Additional Details", href="/page-3")
+        ])
+    ], className='row', id="about-content")
+
+def additional_text():
+    """
+    Returns markdown version of our additional infor page text.
+    """
+    return html.Div(children=[
+        dcc.Markdown('''
+            # About
+            PLEASE ENTER ABOUT ADDITIONAL INFO HERE
+        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        html.Div([
+            dcc.Link("Go to Visualization", href="/page-1"),
+            html.Br(),
+            dcc.Link("Go to About", href="/page-2")
+        ])
+    ], className='row', id="additional-content")
 
 # Sequentially add page components to the app's layout
-def dynamic_layout():
+def viz_layout():
     return html.Div([
         page_header(),
         html.Hr(),
         description(),
-        # dcc.Graph(id='trend-graph', figure=static_stacked_trend_graph(stack=False)),
-        dcc.Graph(id='stacked-trend-graph', figure=static_stacked_trend_graph(stack=True)),
-        what_if_description(),
-        what_if_tool(),
-        # architecture_summary(),
-    ], className='row', id='content')
+        interaction_description(),
+        interaction_tool(),
+        suggestions(),
+        html.Div([
+            dcc.Link("Go to About", href="/page-2"),
+            html.Br(),
+            dcc.Link("Go to Additional Details", href="/page-3")
+        ])
+    ], className='row', id="viz-content")
 
 
-# set layout to a function which updates upon reloading
-app.layout = dynamic_layout
+app.config.suppress_callback_exceptions = True
+app.layout = viz_layout
 
+index_page = html.Div([
+    dcc.Link("Visualization", href="/page-1"),
+    html.Br(),
+    dcc.Link("About", href="/page-2"),
+    html.Br(),
+    dcc.Link("Additional Details", href="/page-3")
+])
+
+page_1_layout = viz_layout()
+page_2_layout = html.Div([
+    about_text()
+])
+page_3_layout = html.Div([
+    additional_text()
+])
 
 # Defines the dependencies of interactive components
 
-@app.callback(
-    dash.dependencies.Output('wind-scale-text', 'children'),
-    [dash.dependencies.Input('wind-scale-slider', 'value')])
-def update_wind_sacle_text(value):
-    """Changes the display text of the wind slider"""
-    return "Wind Power Scale {:.2f}x".format(value)
-
-
-@app.callback(
-    dash.dependencies.Output('hydro-scale-text', 'children'),
-    [dash.dependencies.Input('hydro-scale-slider', 'value')])
-def update_hydro_sacle_text(value):
-    """Changes the display text of the hydro slider"""
-    return "Hydro Power Scale {:.2f}x".format(value)
-
-
+@app.callback(dash.dependencies.Output('page-content', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/page-1':
+        return page_1_layout
+    elif pathname == '/page-2':
+        return page_2_layout
+    elif pathname == '/page-3':
+        return page_3_layout
+    else:
+        return index_page
 
 @app.callback(
-    dash.dependencies.Output('what-if-figure', 'figure'),
-    [dash.dependencies.Input('wind-scale-slider', 'value'),
-     dash.dependencies.Input('hydro-scale-slider', 'value')])
-def what_if_handler(wind, hydro):
-    """Changes the display graph of supply-demand"""
-    df = fetch_all_bpa_as_df(allow_cached=True)
-    x = df['Datetime']
-    supply = df['Wind'] * wind + df['Hydro'] * hydro + df['Fossil/Biomass'] + df['Nuclear']
-    load = df['Load']
+    Output('interaction-figure', 'figure'),
+    [Input('my-date-picker-single', 'date')])
+def update_figure(date):
+    if date is not None:
+        return dict(
+        data=[
+            dict(
+                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+                y=[219, 146, 112, 800, 124, 180, 236, 207, 236, 263,
+                   350, 430, 474, 526, 488, 537, 500, 439],
+                name='Rest of world',
+                marker=dict(
+                    color='rgb(55, 83, 109)'
+                )
+            ),
+            dict(
+                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+                y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
+                   299, 340, 403, 549, 499],
+                name='China',
+                marker=dict(
+                    color='rgb(26, 118, 255)'
+                )
+            )
+        ],
+        layout=dict(
+            title='US Export of Plastic Scrap',
+            showlegend=True,
+            legend=dict(
+                x=0,
+                y=1.0
+            ),
+            margin=dict(l=40, r=0, t=40, b=30)
+        )
+    )
 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x, y=supply, mode='none', name='supply', line={'width': 2, 'color': 'pink'},
-                  fill='tozeroy'))
-    fig.add_trace(go.Scatter(x=x, y=load, mode='none', name='demand', line={'width': 2, 'color': 'orange'},
-                  fill='tonexty'))
-    fig.update_layout(template='plotly_dark', title='Supply/Demand after Power Scaling',
-                      plot_bgcolor='#23272c', paper_bgcolor='#23272c', yaxis_title='MW',
-                      xaxis_title='Date/Time')
-    return fig
+
+@app.callback(
+    dash.dependencies.Output('dd-output-container', 'children'),
+    [dash.dependencies.Input('section-dropdown', 'value')])
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
 
 
 if __name__ == '__main__':
