@@ -3,7 +3,7 @@ from pymongo import MongoClient
 import pprint
 
 
-def dowload_data_from_one_month(year, month):
+def download_data_from_one_month(year, month):
     """
     This function makes a call the NYT archive API and pulls data from a given year and month and it returns a list of jsons containing the data.
     Params:
@@ -34,7 +34,7 @@ def download_and_insert_articles(db, year, month):
     """
     This function downloads and caches (saves in the database) a data from a given year and month.
     """
-    data = dowload_data_from_one_month(year, month)
+    data = download_data_from_one_month(year, month)
     db.articles.insert_many(data)
 
 
