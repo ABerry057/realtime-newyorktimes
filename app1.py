@@ -6,6 +6,7 @@ import dash
 from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
+import pandas as pd
 
 from database import fetch_all_bpa_as_df
 
@@ -105,7 +106,9 @@ def interaction_tool():
                             {'label': 'Travel', 'value': 'travel'},
                             {'label': 'Jobs', 'value': 'jobs'},
                             {'label': 'Real Estate', 'value': 'realestate'},
-                            {'label': 'Autos', 'value': 'autos'}
+                            {'label': 'Autos', 'value': 'autos'},
+                            {'label': 'Archive'},
+                            {'label': 'None'}
                         ],
                         value='all'
                     ),
@@ -174,40 +177,65 @@ def display_children(page):
     Output('interaction-figure', 'figure'),
     [Input('my-date-picker-single', 'date')])
 def update_figure(date):
-    if date is not None:
-        return dict(
-        data=[
-            dict(
-                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-                y=[219, 146, 112, 800, 124, 180, 236, 207, 236, 263,
-                   350, 430, 474, 526, 488, 537, 500, 439],
-                name='Rest of world',
-                marker=dict(
-                    color='rgb(55, 83, 109)'
-                )
-            ),
-            dict(
-                x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-                   2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-                y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
-                   299, 340, 403, 549, 499],
-                name='China',
-                marker=dict(
-                    color='rgb(26, 118, 255)'
-                )
-            )
-        ],
-        layout=dict(
-            title='US Export of Plastic Scrap',
-            showlegend=True,
-            legend=dict(
-                x=0,
-                y=1.0
-            ),
-            margin=dict(l=40, r=0, t=40, b=30)
-        )
-    )
+    raw_data = [['Banks and Banking', 2],
+                ['Taliban', 2],
+                ['Afghanistan', 2],
+                ['News', 1],
+                ['Obama, Barack', 1],
+                ['Volcker, Paul A', 1],
+                ['Economic Recovery Advisory Board', 1],
+                ['United States', 1],
+                ['Helmand Province (Afghanistan)', 1],
+                ['United States Marine Corps', 1],
+                ['Afghanistan War (2001- )', 1],
+                ['United States Defense and Military Forces', 1]]
+    sorted_list=sorted(raw_data,key=lambda x:-x[1])
+    kdf=pd.DataFrame(sorted_list, columns=['Keyword', 'Count'])
+    return {
+        "data": [1,2,3],
+        "x": "Key Word",
+        "y": "Count"
+    }
+    # fig = px.bar(kdf, x='Keyword', y='Count',
+    #          hover_data=['Count'], color='Keyword', height=800,
+    #         labels={'Count':'Keyword Count'}
+    #         )
+
+# def update_figure(date):
+#     if date is not None:
+#         return dict(
+#         data=[
+#             dict(
+#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+#                 y=[219, 146, 112, 800, 124, 180, 236, 207, 236, 263,
+#                    350, 430, 474, 526, 488, 537, 500, 439],
+#                 name='Rest of world',
+#                 marker=dict(
+#                     color='rgb(55, 83, 109)'
+#                 )
+#             ),
+#             dict(
+#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
+#                 y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
+#                    299, 340, 403, 549, 499],
+#                 name='China',
+#                 marker=dict(
+#                     color='rgb(26, 118, 255)'
+#                 )
+#             )
+#         ],
+#         layout=dict(
+#             title='US Export of Plastic Scrap',
+#             showlegend=True,
+#             legend=dict(
+#                 x=0,
+#                 y=1.0
+#             ),
+#             margin=dict(l=40, r=0, t=40, b=30)
+#         )
+#     )
 
 
 @app.callback(
