@@ -2,6 +2,7 @@ import requests
 from pymongo import MongoClient
 from pymongo.errors import BulkWriteError
 from pprint import pprint
+import collections
 
 def download_data_from_one_month(year, month):
     """
@@ -36,13 +37,8 @@ def download_and_insert_articles(db, year, month):
     """
     data = download_data_from_one_month(year, month)
     print("after downloading, before inserting")
-    try:
-        db.articles.insert_many(data)
-    except BulkWriteError as bwe:
-        pprint(bwe.details['writeConcernErrors'])
-        pprint(bwe.details['writeErrors'])
-        print("error printing done")
-        raise
+    data = list({v['web_url']:v for v in data}.values())
+    db.articles.insert_many(data)
 
 
 def get_articles_from_one_month(db, year, month):
@@ -63,9 +59,13 @@ def get_articles_from_one_month(db, year, month):
 
     return output
 
+# +
 def get_document_keywords_list(data):
     """
-    Returns a list in the following format [[document_id_1, [key_words], ..., [document_id_n, [key_words]]]
+    This function takes data as returned from the MongoDB database and it returns a list in the following format
+    [[document_id_1, [key_words]], ..., [document_id_n, [key_words]]].
+    
+    This is a helper function that does not interact with the database.
     """
     output = []
 
@@ -76,10 +76,12 @@ def get_document_keywords_list(data):
 
     return output
 
-import collections
 def get_word_to_count_dict(corpus):
     """
-    Return a list in the following format: [{keyword: count}]
+    Takes a list of id-keywords pairs returned by get_document_keywords_list and return a list in the following
+    format: [{keyword: count}].
+    
+    This is a helper function that does not interact with the database.
     """
     c = collections.Counter()
     for doc in corpus:
@@ -88,6 +90,9 @@ def get_word_to_count_dict(corpus):
             c[keyword] += 1
     return [[key, c[key]] for key in c.keys()]
 
+
+# -
+
 if __name__ == "__main__":
     client = MongoClient("mongodb+srv://team:dummyPassword@cluster0-6vgfj.mongodb.net/test?retryWrites=true&w=majority")
     #client = MongoClient("[mongodb:127.0.0.1:27017]")
@@ -95,7 +100,6 @@ if __name__ == "__main__":
 
     #db.articles.drop()
 
-    data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 10))[1:100]
+    data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 9))[1:100]
 
     print(len(get_word_to_count_dict(data)))
-
