@@ -47,7 +47,7 @@ def description():
         This data can be leveraged to analyze and ultimately visualize the most popular topics in a given time period. 
         Natural language processing allows us to determine a topic area for an article and which keywords are most frequently used. 
         By examining word choice in popular articles and visualizing this information via this Web App, we are be able to identify trends and democratize this information to the public. 
-        ''', className='eleven columns', style={'paddingLeft': '5%'})], className="row")
+        ''', className='eleven columns')], className="row")
 
 
 def interaction_description():
@@ -62,7 +62,7 @@ def interaction_description():
 
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        ''', className='eleven columns', style={'paddingLeft': '5%'})
+        ''', className='eleven columns')
     ], className="row")
 
 
@@ -82,8 +82,8 @@ def interaction_tool():
                     id='my-date-picker-single',
                     min_date_allowed=dt(1900, 1, 1),
                     max_date_allowed=dt(2018, 12, 31),
-                    initial_visible_month=dt(2001, 11, 15),
-                    date=str(dt(2001, 11, 15, 23, 59, 59))
+                    initial_visible_month=dt(2014, 9, 15),
+                    date=str(dt(2015, 9, 15, 23, 59, 59))
                 ),
                 html.Div(id='output-container-date-picker-single'),
                 html.Br(),
@@ -139,7 +139,7 @@ def suggestions():
 
             What trends to you observe? Can you see reoccuring topics appear in different sections? What other historical events or patterns can you find?
 
-        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        ''', className='row eleven columns'),
     ], className='row')
 
 def about_page():
@@ -147,66 +147,108 @@ def about_page():
     Returns markdown for about page.
     """
     return html.Div(children=[
+        html.Div(html.Img(src="/assets/nyt_icon.jpg", className="md-icon"), id="image-wrapper"),
         dcc.Markdown('''
             # About
-
-            [!New_York_Times_logo](\assets\nyt_icon.jpg)
-
-                The New York Times provides publicly accessible APIs with the goal of encouraging innovation through crowdsourcing. The Times would 
-            like the general community of developers to help gain insight into how the dissemination of information can be reimagined. Additionally, 
+            
+            The New York Times provides publicly accessible APIs with the goal of encouraging innovation through crowdsourcing. The Times would like the general community of developers to help gain insight into how the dissemination of information can be reimagined. Additionally, 
             giving the public access to their data is inline with their core journalistic values; to inform the public. The Times APIs will provide
             data illuminating the titles and abstracts of the most popular articles over time.  This data can be leveraged to analyze and ultimately 
             visualize the most popular topics in a given time period. Natural language processing will allow us to determine a topic area for an 
             article and which keywords are most frequently used. By examining word choice in popular articles over time and visualizing this 
             information via a Web App we will be able to identify trends over time and democratize this information to the public. 
 
-                More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may 
-            also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example in 2010, 
+            More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example in 2010, 
             the Iraq war and Helmand province was highly covered. This information is particularly interesting because it can help readers understand 
             which topics are highly covered, and which ones are glanced over and therefore signal what the New York Times deems as newsworthy. 
 
-        ''', className='row eleven columns', style={'paddingLeft': '5%'}),
+        '''),
     ], className='row')
 
-def navigation_bar():
+def additional_page():
     """
-    Returns the navigation bar with radio buttons for each page of the site.
+    Returns markdown for additional info page.
+    """
+    return html.Div(children=[
+        html.Div(html.Img(src="/assets/nyt_icon.jpg", className="md-icon"), className="image-wrapper"),
+        dcc.Markdown('''
+            This project leverages the official NYT API (https://developer.nytimes.com/apis). The data set used is built incrementally with every 
+            call to the API. As a result, the size of the data set is only limited by the maximum allowed calls to the API with our API 
+            key (10 calls per minute). The data is then stored using MongoDB and transformed through NLP techniques. The output of the NLP function
+            returns a nested list where each element in the larger list contained the ID number of the article and another nested list within
+            the list containing the article keywords. To transform the data, the nest list was passed through a function that returns a list for each
+            article in the following format : [{keyword: count}]. A list comprehension is used to sort the most frequently occurring words and is then 
+            converted into a Pandas dataframe. This process is outlined in the chart below:
+        '''),
+        html.Div(html.Img(src="/assets/Query_Path.jpg", className="md-image"), className="image-wrapper"),
+        dcc.Markdown('''
+            The Pandas dataframe is then visualized via Plotly and the resulting web app is constructed in Dash 
+            and interactive graph is made possible through Plotly. The resulting technology stack is the NYT API to MongoDB to Dash. This stack is displayed 
+            in the chart below:
+        '''),
+        html.Div(html.Img(src="/assets/schem.jpg", className="md-image"), className="image-wrapper"),
+        dcc.Markdown('''
+        For more details on the ETL and visualization processes, please see the following notebooks:
+
+        ETL_EDA Notebook:
+
+        https://github.com/ABerry057/realtime-newyorktimes/blob/master/ETL_EDA.ipynb
+
+        Visualization (with enhancement) Notebook:
+
+        https://github.com/ABerry057/realtime-newyorktimes/blob/master/Visualization.ipynb
+        ''')
+    ])
+
+def overall_layout():
+    """
+    Returns the navigation bar with radio buttons for each page of the site and content below.
     """
     return html.Div([
             dcc.RadioItems(options=[
                 {'label': i, 'value': i} for i in ['Visualization', 'About', 'Additional Info']
             ], value='Visualization',
-            id='navigation-links'),
+            id='navigation-links',
+            className='radio-toolbar'),
             html.Div(id='body')
         ])
 
 # Sequentially add page components to the app's layout
 def viz_page():
     return html.Div([
-        navigation_bar(),
         page_header(),
         html.Hr(),
         description(),
-        interaction_description(),
+        # interaction_description(),
         interaction_tool(),
         suggestions()
     ], className='row', id="viz-content")
 
 app.config.suppress_callback_exceptions = True
-app.layout = viz_page()
+app.layout = html.Div([
+    overall_layout()
+])
 
 # Defines the dependencies of interactive components
 @app.callback(Output('body', 'children'), [Input('navigation-links', 'value')])
 def display_children(value):
-    print(f"button clicked: {value}")
     if value == 'Visualization':
-        app.layout = viz_page()
-        return value
+        return html.Div(viz_page(), 
+                id="visualization-page",
+                className="main-content"
+                )
     elif value == 'About':
-        app.layout = about_page()
-        return value
+        return html.Div(about_page(),
+                id="about-page",
+                className="main-content"
+                )
+
     else:
-        return value
+        return html.Div(additional_page(),
+                    id="additional-info-page",
+                    className="main-content"
+                    )
+
    
 @app.callback(
     Output('interaction-figure', 'figure'),
@@ -219,10 +261,8 @@ def update_figure(date):
     month = int(month)
     year = int(date[0:4])
     day = int(date[8:10])
-    # print((year, month))
     raw_data = get_document_keywords_list(get_articles_from_one_month(db, year, month))
     data = get_word_to_count_dict(raw_data)
-    # print(raw_data[1:3])
     sorted_list = sorted(data,key=lambda x:-x[1])[:KW_LIMIT]
     df = pd.DataFrame(sorted_list, columns=['Keyword', 'Count'])
 

@@ -100,6 +100,6 @@ if __name__ == "__main__":
 
     #db.articles.drop()
 
-    data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 9))[1:100]
+    #data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 9))[1:100]
 
-    print(len(get_word_to_count_dict(data)))
+    #print(len(get_word_to_count_dict(data)))

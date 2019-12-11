@@ -1,4 +1,4 @@
-[!New_York_Times_logo](\assets\nyt_icon.jpg)
+![New_York_Times_logo](\assets\nyt_icon.jpg)
 
 The New York Times provides publicly accessible APIs with the goal of encouraging innovation through crowdsourcing. The Times would 
 like the general community of developers to help gain insight into how the dissemination of information can be reimagined. Additionally, 

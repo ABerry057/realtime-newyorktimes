@@ -135,9 +135,107 @@ body {
   /*
   color: rgb(50, 50, 50); }
   */
-  background-color: rebeccapurple;
+  background-color: rebeccapurple !important;
+}
+/*
+#visualization-page { 
+    background-color: red;
+}
+#about-page {
+    background-color: blue;
+}
+#additional-info-page {
+    background-color: yellow;
+}
+*/
+input {
+    border-radius: 10px;
+    border: 0px solid;
+    outline: none;
 }
 
+#my-date-picker-single {
+    border-radius: 10px;
+}
+
+#interaction-figure {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    padding: 30px;
+    padding-bottom: 30px;
+    border-radius: 30px;
+    background-color: white;
+    height: 550px;
+}
+
+#navigation-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333
+}
+
+.md-icon {
+    width: 200px;
+    height: 200px;
+}
+
+.md-image {
+    width: 900px;
+    height: 700px;
+}
+
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-svg {
+    height: 550px;
+}
+
+.main-content {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.radio-toolbar {
+  margin: 10px;
+}
+
+.radio-toolbar input[type="radio"] {
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.radio-toolbar label {
+    display: inline-block;
+    background-color: #ddd;
+    padding: 10px 20px;
+    font-family: sans-serif, Arial;
+    font-size: 16px;
+    border: 2px solid #444;
+    border-radius: 4px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.radio-toolbar label:hover {
+  background-color: #dfd;
+}
+
+.radio-toolbar input[type="radio"]:focus + label {
+    border: 2px dashed #444;
+}
+
+.radio-toolbar input[type="radio"]:checked + label {
+    background-color: #bfb;
+    border-color: #4c4;
+}
 
 /* Typography
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
