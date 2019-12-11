@@ -1,6 +1,7 @@
 import requests
 from pymongo import MongoClient
-import pprint
+from pymongo.errors import BulkWriteError
+from pprint import pprint
 
 def download_data_from_one_month(year, month):
     """
@@ -9,7 +10,7 @@ def download_data_from_one_month(year, month):
         - year: an int {1851, 1852, ... , 2018}
         - month: an int in {1, 2, 3, ... , 12}
     """
-    response = requests.get(f"https://api.nytimes.com/svc/archive/v1/{year}/{month}.json?api-key=EarvxAz31SAtamu5RGpqSfKOaT0Dhr59")
+    response = requests.get(f"https://api.nytimes.com/svc/archive/v1/{year}/{month}.json?api-key=EarvxAz31SAtamu5RGpqSfKOaT0Dhr59", timeout=(2, 15))
     json_response = response.json()
     docs = json_response['response']['docs']
     
@@ -34,7 +35,14 @@ def download_and_insert_articles(db, year, month):
     This function downloads and caches (saves in the database) a data from a given year and month.
     """
     data = download_data_from_one_month(year, month)
-    db.articles.insert_many(data)
+    print("after downloading, before inserting")
+    try:
+        db.articles.insert_many(data)
+    except BulkWriteError as bwe:
+        pprint(bwe.details['writeConcernErrors'])
+        pprint(bwe.details['writeErrors'])
+        print("error printing done")
+        raise
 
 
 def get_articles_from_one_month(db, year, month):
@@ -42,7 +50,7 @@ def get_articles_from_one_month(db, year, month):
     This function returns a data from a given year and month. If the data is already in the database,
     it will not be downloaded again, and if it is not in the db, it will be downloaded and cached.
     """
-    data = db.articles.find_one({'year': str(year)}, {'month': str(month)})
+    data = db.articles.find_one({"$and":[ {"year": str(year)}, {"month": str(month)}] })
     if data is None:
         print("the data is not in the base")
         download_and_insert_articles(db, year, month)
@@ -82,11 +90,12 @@ def get_word_to_count_dict(corpus):
 
 if __name__ == "__main__":
     client = MongoClient("mongodb+srv://team:dummyPassword@cluster0-6vgfj.mongodb.net/test?retryWrites=true&w=majority")
+    #client = MongoClient("[mongodb:127.0.0.1:27017]")
     db = client.new_york_times
 
     #db.articles.drop()
 
-    data = get_document_keywords_list(get_articles_from_one_month(db, 2010, 2))[1:100]
+    data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 10))[1:100]
 
-    print(get_word_to_count_dict(data))
+    print(len(get_word_to_count_dict(data)))
 

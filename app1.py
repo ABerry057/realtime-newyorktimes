@@ -82,8 +82,8 @@ def interaction_tool():
                     id='my-date-picker-single',
                     min_date_allowed=dt(1900, 1, 1),
                     max_date_allowed=dt(2018, 12, 31),
-                    initial_visible_month=dt(2010, 8, 15),
-                    date=str(dt(2010, 8, 15, 23, 59, 59))
+                    initial_visible_month=dt(2001, 11, 15),
+                    date=str(dt(2001, 11, 15, 23, 59, 59))
                 ),
                 html.Div(id='output-container-date-picker-single')
             ]),
@@ -180,9 +180,16 @@ def display_children(page):
     [Input('my-date-picker-single', 'date')])
 def update_figure(date):
     KW_LIMIT = 10 # key word limit
-    raw_data = get_document_keywords_list(get_articles_from_one_month(db, 2010, 2))
+    month = date[5:7]
+    if month.startswith('0'):
+        month = month.replace('0','')
+    month = int(month)
+    year = int(date[0:4])
+    day = int(date[8:10])
+    print((year, month))
+    raw_data = get_document_keywords_list(get_articles_from_one_month(db, year, month))
     data = get_word_to_count_dict(raw_data)
-    # print(data[1:3])
+    # print(raw_data[1:3])
     sorted_list = sorted(data,key=lambda x:-x[1])[:KW_LIMIT]
     df = pd.DataFrame(sorted_list, columns=['Keyword', 'Count'])
 
@@ -192,16 +199,18 @@ def update_figure(date):
                       color = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe']
                      )
                 )
-    d = datetime.date(int(date[0:4]), int(date[5:7]), int(date[8:10]))
+    d = datetime.date(year, month, day)
     f_date = d.strftime("%B") + " " + str(d.year) #grab only month and year
     return {
         'data': [bars],
         'layout': go.Layout(title=f'New York Times Top 10 Key Words in {f_date}',
                             hovermode="closest",
-                            xaxis={'title': "Key Word", 'titlefont': {'color': 'black', 'size': 14},
-                                   'tickfont': {'size': 9, 'color': 'black'}},
-                            yaxis={'title': "Count", 'titlefont': {'color': 'black', 'size': 14, },
-                                   'tickfont': {'color': 'black'}})}
+                            xaxis={'title': "Key Word", 'titlefont': {'color': 'black', 'size': 14, 'family': 'Open Sans'},
+                                   'tickfont': {'size': 9, 'color': 'black', 'family': 'Open Sans'},
+                                   'tickangle': 30},
+                            yaxis={'title': "Count", 'titlefont': {'color': 'black', 'size': 14, 'family': 'Open Sans'},
+                                   'tickfont': {'color': 'black', 'family': 'Opens Sans'},
+                                   'tickangle': 30})}
 
 
 # @app.callback(
