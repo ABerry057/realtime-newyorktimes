@@ -2,12 +2,7 @@ import requests
 from pymongo import MongoClient
 import pprint
 
-<<<<<<< HEAD
-def dowload_data_from_one_month(year, month):
-=======
-
 def download_data_from_one_month(year, month):
->>>>>>> refs/remotes/origin/master
     """
     This function makes a call the NYT archive API and pulls data from a given year and month and it returns a list of jsons containing the data.
     Params:
@@ -68,7 +63,7 @@ def get_document_keywords_list(data):
 
     for doc in data:
         id = doc['_id']
-        keywords = [keyword['value'] for keyword in doc['keywords']]
+        keywords = [keyword['value'] for keyword in doc['keywords'] if keyword['name'] != 'type_of_material']
         output.append([id, keywords])
 
     return output
@@ -83,7 +78,7 @@ def get_word_to_count_dict(corpus):
         keywords = doc[1]
         for keyword in keywords:
             c[keyword] += 1
-    return [{key: c[key]} for key in c.keys()]
+    return [[key, c[key]] for key in c.keys()]
 
 if __name__ == "__main__":
     client = MongoClient("mongodb+srv://team:dummyPassword@cluster0-6vgfj.mongodb.net/test?retryWrites=true&w=majority")

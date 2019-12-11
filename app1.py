@@ -6,9 +6,11 @@ import dash
 from dash.dependencies import Input, Output
 import numpy as np
 import plotly.graph_objects as go
+import pymongo
 import pandas as pd
+import datetime
 
-from database import fetch_all_bpa_as_df
+from get_data import get_word_to_count_dict, get_document_keywords_list, get_articles_from_one_month
 
 # Definitions of constants. This projects uses extra CSS stylesheet at `./assets/style.css`
 COLORS = ['rgb(25,100,126)', 'rgb(40,175,176)', 'rgb(221,222,205)', 'rgb(238,229,229)']
@@ -177,73 +179,39 @@ def display_children(page):
     Output('interaction-figure', 'figure'),
     [Input('my-date-picker-single', 'date')])
 def update_figure(date):
-    raw_data = [['Banks and Banking', 2],
-                ['Taliban', 2],
-                ['Afghanistan', 2],
-                ['News', 1],
-                ['Obama, Barack', 1],
-                ['Volcker, Paul A', 1],
-                ['Economic Recovery Advisory Board', 1],
-                ['United States', 1],
-                ['Helmand Province (Afghanistan)', 1],
-                ['United States Marine Corps', 1],
-                ['Afghanistan War (2001- )', 1],
-                ['United States Defense and Military Forces', 1]]
-    sorted_list=sorted(raw_data,key=lambda x:-x[1])
-    kdf=pd.DataFrame(sorted_list, columns=['Keyword', 'Count'])
+    KW_LIMIT = 10 # key word limit
+    raw_data = get_document_keywords_list(get_articles_from_one_month(db, 2010, 2))
+    data = get_word_to_count_dict(raw_data)
+    # print(data[1:3])
+    sorted_list = sorted(data,key=lambda x:-x[1])[:KW_LIMIT]
+    df = pd.DataFrame(sorted_list, columns=['Keyword', 'Count'])
+
+    bars = go.Bar(x=df['Keyword'],
+                  y=df['Count'],
+                  marker = dict(
+                      color = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe']
+                     )
+                )
+    d = datetime.date(int(date[0:4]), int(date[5:7]), int(date[8:10]))
+    f_date = d.strftime("%B") + " " + str(d.year) #grab only month and year
     return {
-        "data": [1,2,3],
-        "x": "Key Word",
-        "y": "Count"
-    }
-    # fig = px.bar(kdf, x='Keyword', y='Count',
-    #          hover_data=['Count'], color='Keyword', height=800,
-    #         labels={'Count':'Keyword Count'}
-    #         )
-
-# def update_figure(date):
-#     if date is not None:
-#         return dict(
-#         data=[
-#             dict(
-#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-#                 y=[219, 146, 112, 800, 124, 180, 236, 207, 236, 263,
-#                    350, 430, 474, 526, 488, 537, 500, 439],
-#                 name='Rest of world',
-#                 marker=dict(
-#                     color='rgb(55, 83, 109)'
-#                 )
-#             ),
-#             dict(
-#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-#                 y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
-#                    299, 340, 403, 549, 499],
-#                 name='China',
-#                 marker=dict(
-#                     color='rgb(26, 118, 255)'
-#                 )
-#             )
-#         ],
-#         layout=dict(
-#             title='US Export of Plastic Scrap',
-#             showlegend=True,
-#             legend=dict(
-#                 x=0,
-#                 y=1.0
-#             ),
-#             margin=dict(l=40, r=0, t=40, b=30)
-#         )
-#     )
+        'data': [bars],
+        'layout': go.Layout(title=f'New York Times Top 10 Key Words in {f_date}',
+                            hovermode="closest",
+                            xaxis={'title': "Key Word", 'titlefont': {'color': 'black', 'size': 14},
+                                   'tickfont': {'size': 9, 'color': 'black'}},
+                            yaxis={'title': "Count", 'titlefont': {'color': 'black', 'size': 14, },
+                                   'tickfont': {'color': 'black'}})}
 
 
-@app.callback(
-    dash.dependencies.Output('dd-output-container', 'children'),
-    [dash.dependencies.Input('section-dropdown', 'value')])
-def update_output(value):
-    return 'You have selected "{}"'.format(value)
+# @app.callback(
+#     dash.dependencies.Output('dd-output-container', 'children'),
+#     [dash.dependencies.Input('section-dropdown', 'value')])
+# def update_output(value):
+#     return 'You have selected "{}"'.format(value)
 
 
 if __name__ == '__main__':
+    client = pymongo.MongoClient("mongodb+srv://team:dummyPassword@cluster0-6vgfj.mongodb.net/test?retryWrites=true&w=majority")
+    db = client.new_york_times
     app.run_server(debug=True, port=1050, host='0.0.0.0')
