@@ -182,6 +182,11 @@ input {
 
 .md-image {
     width: 900px;
+    height: 600px;
+}
+
+.md-tall-image {
+    width: 900px;
     height: 700px;
 }
 

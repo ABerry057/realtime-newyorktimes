@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #client = MongoClient("[mongodb:127.0.0.1:27017]")
     db = client.new_york_times
 
-    #db.articles.drop()
+    # db.articles.drop()
 
     #data = get_document_keywords_list(get_articles_from_one_month(db, 1997, 9))[1:100]
 

@@ -21,8 +21,6 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 
 # Define component functions
-
-
 def page_header():
     """
     Returns the page header as a dash `html.Div`
@@ -39,31 +37,13 @@ def description():
     """
     return html.Div(children=[dcc.Markdown('''
         ### The News. Visualized.
-        The New York Times provides publicly-accessible APIs with the goal of encouraging innovation through crowdsourcing.
-        The Times would like the general community of developers to help gain insight into how the dissemination of information can be re-imagined. 
-        Additionally, giving the public access to their data is inline with their core journalistic values; to inform the public.
-
-        The Times APIs provide data illuminating the titles and abstracts of the most popular articles over time. 
-        This data can be leveraged to analyze and ultimately visualize the most popular topics in a given time period. 
-        Natural language processing allows us to determine a topic area for an article and which keywords are most frequently used. 
-        By examining word choice in popular articles and visualizing this information via this Web App, we are be able to identify trends and democratize this information to the public. 
-        ''', className='eleven columns')], className="row")
-
-
-def interaction_description():
-    """
-    Returns description of interactive component.
-    """
-    return html.Div(children=[
-        dcc.Markdown('''
         # Lorem ipsum
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        ''', className='eleven columns')
-    ], className="row")
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. and democratize this information to the public. 
+        ''', className='eleven columns')], className="row")
 
 
 def interaction_tool():
@@ -82,8 +62,8 @@ def interaction_tool():
                     id='my-date-picker-single',
                     min_date_allowed=dt(1900, 1, 1),
                     max_date_allowed=dt(2018, 12, 31),
-                    initial_visible_month=dt(2014, 9, 15),
-                    date=str(dt(2015, 9, 15, 23, 59, 59))
+                    initial_visible_month=dt(2008, 6, 15),
+                    date=str(dt(2008, 6, 15, 23, 59, 59))
                 ),
                 html.Div(id='output-container-date-picker-single'),
                 html.Br(),
@@ -125,19 +105,19 @@ def interaction_tool():
 
 def suggestions():
     """
-    Returns the text for suggested searches and filters pertaining to interesting topics/trends.
+    Returns the text for suggested searches apertaining to interesting topics/trends.
     """
     return html.Div(children=[
         dcc.Markdown('''
             # Suggestions
-            Start your exploration by searching by the following date and section combinations:
+            Start your exploration by searching by the following dates:
 
             1. 05/15/1912
             2. 12/08/1941
             3. 07/21/1969
             4. 08/10/1974
 
-            What trends to you observe? Can you see reoccuring topics appear in different sections? What other historical events or patterns can you find?
+            What trends to you observe? What other historical events or patterns can you find?
 
         ''', className='row eleven columns'),
     ], className='row')
@@ -158,9 +138,9 @@ def about_page():
             article and which keywords are most frequently used. By examining word choice in popular articles over time and visualizing this 
             information via a Web App we will be able to identify trends over time and democratize this information to the public. 
 
-            More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example in 2010, 
-            the Iraq war and Helmand province was highly covered. This information is particularly interesting because it can help readers understand 
-            which topics are highly covered, and which ones are glanced over and therefore signal what the New York Times deems as newsworthy. 
+            More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example in May 2003, 
+            the Iraq War and the alleged existence of atomic and chemical weapons in that country were highly covered. This information is particularly interesting because it can help readers understand 
+            which topics are given more attention, and which ones are glanced over and may therefore signal what the editors of New York Times deem as newsworthy. 
 
         '''),
     ], className='row')
@@ -170,23 +150,22 @@ def additional_page():
     Returns markdown for additional info page.
     """
     return html.Div(children=[
-        html.Div(html.Img(src="/assets/nyt_icon.jpg", className="md-icon"), className="image-wrapper"),
         dcc.Markdown('''
             This project leverages the official NYT API (https://developer.nytimes.com/apis). The data set used is built incrementally with every 
             call to the API. As a result, the size of the data set is only limited by the maximum allowed calls to the API with our API 
-            key (10 calls per minute). The data is then stored using MongoDB and transformed through NLP techniques. The output of the NLP function
-            returns a nested list where each element in the larger list contained the ID number of the article and another nested list within
-            the list containing the article keywords. To transform the data, the nest list was passed through a function that returns a list for each
-            article in the following format : [{keyword: count}]. A list comprehension is used to sort the most frequently occurring words and is then 
+            key (10 calls per minute). The data is then stored using MongoDB and transformed through NLP techniques. The output of the NLP process
+            returns a nested list where each element in the larger list contains the ID number of the article and another nested list within
+            the list containing the article keywords. To transform the data, the nested list was passed through a function that returns a list for each
+            article in the following format : [{keyword: count}]. A list comprehension is used to sort the most frequently occurring words and the data is then 
             converted into a Pandas dataframe. This process is outlined in the chart below:
         '''),
         html.Div(html.Img(src="/assets/Query_Path.jpg", className="md-image"), className="image-wrapper"),
         dcc.Markdown('''
-            The Pandas dataframe is then visualized via Plotly and the resulting web app is constructed in Dash 
-            and interactive graph is made possible through Plotly. The resulting technology stack is the NYT API to MongoDB to Dash. This stack is displayed 
+            The Pandas dataframe is then visualized in the resulting web app, which is constructed in Dash 
+            with the interactive graph made using Plotly. The resulting technology stack is the NYT API to MongoDB to Dash. This stack is displayed 
             in the chart below:
         '''),
-        html.Div(html.Img(src="/assets/schem.jpg", className="md-image"), className="image-wrapper"),
+        html.Div(html.Img(src="/assets/schem.jpg", className="md-tall-image"), className="image-wrapper"),
         dcc.Markdown('''
         For more details on the ETL and visualization processes, please see the following notebooks:
 
@@ -219,7 +198,6 @@ def viz_page():
         page_header(),
         html.Hr(),
         description(),
-        # interaction_description(),
         interaction_tool(),
         suggestions()
     ], className='row', id="viz-content")
