@@ -37,13 +37,20 @@ def description():
     """
     return html.Div(children=[dcc.Markdown('''
         # The News. Visualized.
-        ### Lorem ipsum
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        The New York Times provides publicly accessible APIs which is in line with their core journalistic values; to inform the public. The Times APIs will provide data illuminating the titles and abstracts of the most popular articles over time. This data can be leveraged to analyze and ultimately visualize the most popular topics in a given time period. Natural language processing will allow us to determine a topic area for an
+        article and which keywords are most frequently used.
 
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. and democratize this information to the public. 
-        ''', className='eleven columns')], className="row")
+        As of 2018, there were 4 million subscribers of the New York Times (NYT). It is therefore important to understand what were the most frequently covered topics in a given month to better understand what types of news the readers were exposed to. More generally, by visualizing the most frequently occurring keywords, we can determine how highly covered a given topic such as the 2016 election was in March of 2016. Through visualization readers will gain insight on the landmark events in a given month (from January 1, 1900 to December 31, 2018) and get a snapshot of what was going on at a given time.
+
+        To use the visualization tool below, simply enter a date (by typing or using the calendar tool) and wait a few moments for the visualization to update. We encourage you to explore several different dates.
+
+        1) Dates of recent events that you're particularly interested in (for example on June 23, 2016, the UK voted on the EU membership referendum) to determine if what you thought was an important event was highly covered
+
+        2) Consecutive months in a year or over multiple years to explore trends and movements over time
+
+        3) Historical dates. Note that these dates will be of particular interest because the keywords were manually entered. Moreover, it can shed light on how editors decide to organize and label news stories.
+        '''),
+    ], className='row')
 
 
 def interaction_tool():
@@ -70,35 +77,6 @@ def interaction_tool():
                 html.H6("Possible dates: 01/01/1900 - 12/31/2018")
             
             ]),
-            # dropdown for sections
-            # html.Div([
-            #     html.H5("Choose a section of the paper to filter by"),
-            #         dcc.Dropdown(
-            #             id='section-dropdown',
-            #             options=[
-            #                 {'label': "All Sections", 'value': 'all'},
-            #                 {'label': 'World', 'value': 'world'},
-            #                 {'label': 'U.S.', 'value': 'us'},
-            #                 {'label': 'N.Y. / Region', 'value': 'nyregion'},
-            #                 {'label': 'Business', 'value': 'business'},
-            #                 {'label': 'Technology', 'value': 'technology'},
-            #                 {'label': 'Science', 'value': 'science'},
-            #                 {'label': 'Health', 'value': 'health'},
-            #                 {'label': 'Sports', 'value': 'sports'},
-            #                 {'label': 'Opinion', 'value': 'opinion'},
-            #                 {'label': 'Arts', 'value': 'arts'},
-            #                 {'label': 'Style', 'value': 'style'},
-            #                 {'label': 'Travel', 'value': 'travel'},
-            #                 {'label': 'Jobs', 'value': 'jobs'},
-            #                 {'label': 'Real Estate', 'value': 'realestate'},
-            #                 {'label': 'Autos', 'value': 'autos'},
-            #                 {'label': 'Archive'},
-            #                 {'label': 'None'}
-            #             ],
-            #             value='all'
-            #         ),
-            #         html.Div(id='dd-output-container')
-            # ])
         ], className='three columns', style={'marginLeft': 5, 'marginTop': '10%'}),
     ], className='row eleven columns')
 
@@ -262,13 +240,6 @@ def update_figure(date):
                             yaxis={'title': "Count", 'titlefont': {'color': 'black', 'size': 14, 'family': 'Open Sans'},
                                    'tickfont': {'color': 'black', 'family': 'Opens Sans'},
                                    'tickangle': 0})}
-
-
-# @app.callback(
-#     dash.dependencies.Output('dd-output-container', 'children'),
-#     [dash.dependencies.Input('section-dropdown', 'value')])
-# def update_output(value):
-#     return 'You have selected "{}"'.format(value)
 
 
 if __name__ == '__main__':
