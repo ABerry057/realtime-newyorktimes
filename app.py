@@ -116,9 +116,9 @@ def about_page():
             article and which keywords are most frequently used. By examining word choice in popular articles over time and visualizing this 
             information via a Web App we will be able to identify trends over time and democratize this information to the public. 
 
-            More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example in May 2003, 
+            More generally, we may also be able to determine what topics were salient in a given time period. By looking at the keywords we may also be able to determine news that was highly covered and saturated the percentage of all topics in the articles. For example, in May 2003, 
             the Iraq War and the alleged existence of atomic and chemical weapons in that country were highly covered. This information is particularly interesting because it can help readers understand 
-            which topics are given more attention, and which ones are glanced over and may therefore signal what the editors of New York Times deem as newsworthy. 
+            which topics are given more attention, and which ones are glanced over and may therefore signal what the editors of the New York Times deem as newsworthy. 
 
         '''),
     ], className='row')
