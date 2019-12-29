@@ -2,7 +2,7 @@
 
 This project aims to identify the most important topics of a given time period by analyzing data pulled from the New York Times Archive [API](https://developer.nytimes.com/docs/archive-product/1/overview).
 
-![An example of the visualization](assets/illustration_rtnyt.png)
+![An example of the visualization](assets/illustration_rtnyt.jpg)
 
 ## Getting started
 
