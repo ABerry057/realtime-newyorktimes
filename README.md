@@ -2,6 +2,8 @@
 
 This project aims to identify the most important topics of a given time period by analyzing data pulled from the New York Times Archive [API](https://developer.nytimes.com/docs/archive-product/1/overview).
 
+![An example of the visualization](assets/illustration_rtnyt.png)
+
 ## Getting started
 
 * In order to run the app, install all the requirements stated in requirements.txt and run `python3 app.py` in the main directory.
